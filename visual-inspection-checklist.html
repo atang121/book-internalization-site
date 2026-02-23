@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Inspection Checklist</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      padding: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 { color: #d4a574; margin-bottom: 30px; }
+    h2 { color: #74b5a7; margin-top: 40px; margin-bottom: 20px; }
+    
+    .checklist-section {
+      background: #242424;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+    
+    .spec-item {
+      background: #1a1a1a;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #555;
+      border-radius: 4px;
+    }
+    
+    .spec-item.critical { border-left-color: #d4a574; }
+    .spec-item.visual { border-left-color: #74b5a7; }
+    .spec-item.interaction { border-left-color: #7aab6e; }
+    
+    .spec-title {
+      font-weight: bold;
+      color: #d4a574;
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+    
+    .spec-value {
+      font-family: 'Monaco', 'Courier New', monospace;
+      color: #4c8bf5;
+      background: #0a0a0a;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+    
+    .spec-description {
+      color: #b0b0b0;
+      margin-top: 5px;
+      line-height: 1.6;
+    }
+    
+    .screenshot-box {
+      background: #000;
+      border: 2px solid #333;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+    
+    .screenshot-title {
+      color: #d4a574;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .screenshot-checklist {
+      list-style: none;
+      padding-left: 0;
+    }
+    
+    .screenshot-checklist li {
+      padding: 5px 0;
+      color: #aaa;
+    }
+    
+    .screenshot-checklist li::before {
+      content: '☐ ';
+      color: #d4a574;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    
+    .code-block {
+      background: #0a0a0a;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #0f0;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+    
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 15px 0;
+    }
+    
+    .comparison-item {
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 6px;
+    }
+    
+    .comparison-item h4 {
+      color: #74b5a7;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+    
+    .action-btn {
+      background: #d4a574;
+      color: #000;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px 10px 10px 0;
+      font-size: 1rem;
+    }
+    
+    .action-btn:hover {
+      background: #e0b386;
+    }
+  </style>
+</head>
+<body>
+  <h1>📸 Visual Inspection Checklist - 内化花园</h1>
+  
+  <div style="margin-bottom: 30px;">
+    <button class="action-btn" onclick="window.open('http://localhost:8765/index.html', '_blank')">
+      🚀 Open Website in New Tab
+    </button>
+    <button class="action-btn" onclick="window.open('comprehensive-test.html', '_blank')">
+      🧪 Open Automated Tests
+    </button>
+  </div>
+
+  <div class="checklist-section">
+    <h2>📋 Screenshot 1: Homepage</h2>
+    <div class="screenshot-box">
+      <div class="screenshot-title">What to Look For:</div>
+      <ul class="screenshot-checklist">
+        <li>Title "内化花园" centered at top with gradient effect</li>
+        <li>Exactly 4 book cards displayed in grid layout</li>
+        <li>Each card shows: icon, title, original title, author, question, date</li>
+        <li>Dark background (#0b0c13) with ambient glow effect</li>
+        <li>Cards have subtle hover effects (lift up slightly)</li>
+      </ul>
+    </div>
+    
+    <div class="spec-item critical">
+      <div class="spec-title">✓ Expected Book Count</div>
+      <div class="spec-value">4 books</div>
+      <div class="spec-description">
+        Should show: 在关系中认识自我, 活在当下, 这书能让你戒烟, 终身成长
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>📋 Screenshot 2: Book Detail View - Initial State</h2>
+    <div class="screenshot-box">
+      <div class="screenshot-title">What to Look For:</div>
+      <ul class="screenshot-checklist">
+        <li>Left sidebar visible with 6 step items vertically listed</li>
+        <li>First step "核心命题" is highlighted/active</li>
+        <li>Active item has warm gold left border (3px solid)</li>
+        <li>Active item has warm gradient background (gold tint, fading right)</li>
+        <li>Main content area shows first section (核心命题)</li>
+        <li>"返回花园" button in top-left corner</li>
+        <li>Book title and author in header</li>
+      </ul>
+    </div>
+
+    <h3 style="color: #d4a574; margin-top: 25px;">Sidebar Specifications:</h3>
+    
+    <div class="spec-item critical">
+      <div class="spec-title">✓ Sidebar Label Font Size</div>
+      <div class="spec-value">font-size: 0.95rem</div>
+      <div class="spec-description">
+        Labels should be readable but not overwhelming. Check: "核心命题", "概念拓扑", etc.
+      </div>
+    </div>
+
+    <div class="spec-item visual">
+      <div class="spec-title">✓ Active Item Background</div>
+      <div class="spec-value">background: linear-gradient(90deg, rgba(212, 165, 116, 0.06) 0%, transparent 100%)</div>
+      <div class="spec-description">
+        Warm gold gradient that fades from left to right, creating a subtle glow effect
+      </div>
+    </div>
+
+    <div class="spec-item visual">
+      <div class="spec-title">✓ Active Item Left Border</div>
+      <div class="spec-value">border-left-color: var(--book-accent, #d4a574)</div>
+      <div class="spec-description">
+        3px solid gold border on left edge of active item (uses book's accent color)
+      </div>
+    </div>
+
+    <div class="spec-item visual">
+      <div class="spec-title">✓ Icon Styling</div>
+      <div class="spec-value">Inactive: opacity 0.3, grayscale 0.8 | Active: opacity 1.0, grayscale 0, scale 1.08</div>
+      <div class="spec-description">
+        Inactive icons should be dim and desaturated. Active icon is vibrant and slightly larger.
+      </div>
+    </div>
+
+    <div class="spec-item visual">
+      <div class="spec-title">✓ Label Color</div>
+      <div class="spec-value">Inactive: var(--text-muted) | Active: var(--text-primary), font-weight 500</div>
+      <div class="spec-description">
+        Active label should be bright and slightly bolder
+      </div>
+    </div>
+
+    <div class="spec-item visual">
+      <div class="spec-title">✓ Step Number</div>
+      <div class="spec-value">Active: opacity 0.7, gold accent color</div>
+      <div class="spec-description">
+        Small serif number on right side, gold colored when active
+      </div>
+    </div>
+
+    <h3 style="color: #74b5a7; margin-top: 25px;">Sidebar Items (6 steps):</h3>
+    <div class="code-block">
+1. 📚 核心命题 (coreProposition)
+2. 🦴 概念拓扑 (topology)
+3. 🧠 认知同化 (assimilation)
+4. ⚔️ 破坏重塑 (destruction)
+5. 🔨 事上磨练 (practice)
+6. 🌱 跨界生发 (crossDomain)
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>📋 Screenshot 3: Scrolled to Step 2 (概念拓扑)</h2>
+    <div class="screenshot-box">
+      <div class="screenshot-title">What to Look For:</div>
+      <ul class="screenshot-checklist">
+        <li>Sidebar has auto-updated: Step 2 is now active/highlighted</li>
+        <li>Step 1 is no longer active (should be dim)</li>
+        <li>Gold left border moved to Step 2 item</li>
+        <li>Warm gradient background on Step 2</li>
+        <li>Content area shows 概念拓扑 section with topology diagrams</li>
+        <li>Sidebar should be sticky (stays visible while scrolling)</li>
+      </ul>
+    </div>
+
+    <div class="spec-item interaction">
+      <div class="spec-title">✓ Scroll Tracking</div>
+      <div class="spec-description">
+        As you scroll down the page, the sidebar should automatically highlight the step that corresponds to the visible section. This uses IntersectionObserver for smooth, efficient tracking.
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>📋 Screenshot 4: Scrolled to Step 3 (认知同化)</h2>
+    <div class="screenshot-box">
+      <div class="screenshot-title">What to Look For:</div>
+      <ul class="screenshot-checklist">
+        <li>Sidebar tracking continues to work: Step 3 now active</li>
+        <li>Only one step is active at a time</li>
+        <li>Content shows 认知同化 with expandable principle cards</li>
+        <li>Sidebar position remains sticky on left</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>📋 Screenshot 5: After Clicking Sidebar Item</h2>
+    <div class="screenshot-box">
+      <div class="screenshot-title">Test: Click on "事上磨练" (Step 5) in Sidebar</div>
+      <ul class="screenshot-checklist">
+        <li>Page should smoothly scroll to Step 5 section</li>
+        <li>Sidebar updates to show Step 5 as active</li>
+        <li>Smooth scrolling animation visible</li>
+        <li>Content shows 事上磨练 with scenario cards</li>
+      </ul>
+    </div>
+
+    <div class="spec-item interaction">
+      <div class="spec-title">✓ Click Navigation</div>
+      <div class="spec-description">
+        Clicking any sidebar item should smoothly scroll the page to that section and update the active highlight. Uses scrollIntoView with smooth behavior.
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>⚠️ Common Visual Issues to Check</h2>
+    
+    <div class="spec-item" style="border-left-color: #e74c3c;">
+      <div class="spec-title">❌ Broken Layout Issues</div>
+      <div class="spec-description">
+        <strong>Check for these problems:</strong>
+        <ul style="margin-top: 10px; padding-left: 20px;">
+          <li>Sidebar overlapping content area</li>
+          <li>Text overflowing containers</li>
+          <li>Icons misaligned with labels</li>
+          <li>Active state not visible (border or background missing)</li>
+          <li>Multiple items active at once</li>
+          <li>Sidebar not sticky (disappears when scrolling)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spec-item" style="border-left-color: #f39c12;">
+      <div class="spec-title">⚠️ Typography Issues</div>
+      <div class="spec-description">
+        <strong>Font problems to watch for:</strong>
+        <ul style="margin-top: 10px; padding-left: 20px;">
+          <li>Labels too small or too large (should be 0.95rem ≈ 15px)</li>
+          <li>Font not loading (should be PingFang SC for Chinese)</li>
+          <li>Letter spacing too tight or too loose</li>
+          <li>Unreadable text colors (too dim)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spec-item" style="border-left-color: #9b59b6;">
+      <div class="spec-title">🎨 Color & Visual Issues</div>
+      <div class="spec-description">
+        <strong>Visual problems:</strong>
+        <ul style="margin-top: 10px; padding-left: 20px;">
+          <li>Gold accent not showing (#d4a574 should be visible)</li>
+          <li>Gradient background not subtle enough or too subtle</li>
+          <li>Icons not changing opacity between active/inactive</li>
+          <li>No grayscale effect on inactive icons</li>
+          <li>Left border not 3px or wrong color</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spec-item" style="border-left-color: #3498db;">
+      <div class="spec-title">🖱️ Interaction Issues</div>
+      <div class="spec-description">
+        <strong>Functional problems:</strong>
+        <ul style="margin-top: 10px; padding-left: 20px;">
+          <li>Sidebar items not clickable</li>
+          <li>Scroll tracking not updating active state</li>
+          <li>No smooth scrolling when clicking sidebar</li>
+          <li>Active state not updating as you scroll</li>
+          <li>Hover effects not working</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>🔍 CSS Values Reference</h2>
+    
+    <div class="comparison">
+      <div class="comparison-item">
+        <h4>Inactive Sidebar Item</h4>
+        <div class="code-block" style="font-size: 0.75rem;">
+.sidebar-step {
+  padding: 16px 24px 16px 22px;
+  gap: 14px;
+  border-left: 3px solid transparent;
+  background: transparent;
+}
+
+.sidebar-icon {
+  font-size: 1.35rem;
+  opacity: 0.3;
+  filter: grayscale(0.8);
+}
+
+.sidebar-label {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  font-weight: 400;
+}
+
+.sidebar-num {
+  font-size: 0.7rem;
+  opacity: 0.3;
+  color: var(--text-muted);
+}
+        </div>
+      </div>
+
+      <div class="comparison-item">
+        <h4>Active Sidebar Item</h4>
+        <div class="code-block" style="font-size: 0.75rem;">
+.sidebar-step.active {
+  background: linear-gradient(
+    90deg, 
+    rgba(212, 165, 116, 0.06) 0%, 
+    transparent 100%
+  );
+  border-left-color: #d4a574;
+}
+
+.sidebar-step.active .sidebar-icon {
+  opacity: 1;
+  filter: grayscale(0);
+  transform: scale(1.08);
+}
+
+.sidebar-step.active .sidebar-label {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.sidebar-step.active .sidebar-num {
+  opacity: 0.7;
+  color: #d4a574;
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>📐 Layout Measurements</h2>
+    
+    <div class="spec-item">
+      <div class="spec-title">Sidebar Position</div>
+      <div class="spec-value">position: sticky; top: 0</div>
+      <div class="spec-description">Should stay visible on left side while scrolling content</div>
+    </div>
+
+    <div class="spec-item">
+      <div class="spec-title">Sidebar Width</div>
+      <div class="spec-value">var(--sidebar-width)</div>
+      <div class="spec-description">Fixed width, should not flex or resize</div>
+    </div>
+
+    <div class="spec-item">
+      <div class="spec-title">Content Area</div>
+      <div class="spec-value">flex: 1 (grows to fill remaining space)</div>
+      <div class="spec-description">Should be scrollable with all 6 sections visible</div>
+    </div>
+
+    <div class="spec-item">
+      <div class="spec-title">Item Padding</div>
+      <div class="spec-value">16px 24px 16px 22px</div>
+      <div class="spec-description">Comfortable spacing for touch and mouse</div>
+    </div>
+  </div>
+
+  <div class="checklist-section">
+    <h2>✅ Final Checklist</h2>
+    
+    <div class="code-block" style="color: #aaa;">
+☐ Homepage shows exactly 4 book cards
+☐ Clicking first book opens detail view
+☐ Left sidebar appears with 6 vertical items
+☐ Sidebar labels are 0.95rem (~15px) - readable size
+☐ First step "核心命题" is active/highlighted
+☐ Active item has warm gold gradient background
+☐ Active item has 3px gold left border
+☐ Active icon is bright (opacity 1.0) and slightly scaled
+☐ Inactive icons are dim (opacity 0.3) and grayscale
+☐ All 6 sections visible in content (long scrollable page)
+☐ Scrolling down updates sidebar active state automatically
+☐ Sidebar stays sticky on left while scrolling
+☐ Clicking sidebar items scrolls to that section smoothly
+☐ Only one sidebar item is active at a time
+☐ "返回花园" button returns to homepage
+☐ No overlapping elements or broken layout
+☐ Fonts are readable and properly sized
+☐ Warm visual feel with gold accents throughout
+    </div>
+  </div>
+
+  <div style="margin-top: 40px; text-align: center; padding: 30px; background: #242424; border-radius: 8px;">
+    <h2 style="margin-bottom: 20px;">🚀 Quick Actions</h2>
+    <button class="action-btn" onclick="window.open('http://localhost:8765/index.html', '_blank')">
+      Open Website
+    </button>
+    <button class="action-btn" onclick="window.open('comprehensive-test.html', '_blank')">
+      Run Automated Tests
+    </button>
+    <button class="action-btn" onclick="window.location.reload()">
+      Refresh This Page
+    </button>
+  </div>
+
+  <div style="margin-top: 30px; padding: 20px; background: #0a0a0a; border-radius: 8px; border: 1px solid #333;">
+    <h3 style="color: #d4a574; margin-bottom: 15px;">💡 Testing Instructions</h3>
+    <ol style="color: #aaa; line-height: 2; padding-left: 25px;">
+      <li>Click "Open Website" above to open in new tab</li>
+      <li>Take a screenshot of the homepage (4 cards)</li>
+      <li>Click the first book card to open detail view</li>
+      <li>Take a screenshot showing sidebar + content layout</li>
+      <li>Scroll down slowly and watch sidebar auto-update</li>
+      <li>Take screenshots at different scroll positions</li>
+      <li>Click a sidebar item (e.g., "事上磨练") and observe smooth scroll</li>
+      <li>Verify all checklist items above</li>
+      <li>Report any visual issues you find</li>
+    </ol>
+  </div>
+</body>
+</html>

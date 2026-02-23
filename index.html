@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>内化花园 — 在阅读中觉醒</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <div id="home-view">
+      <div class="ambient-glow"></div>
+      <header class="site-header">
+        <p class="site-tag">A Private Spiritual Garden</p>
+        <h1 class="site-title">内化花园</h1>
+        <p class="site-subtitle">在阅读中觉醒，在觉醒中生长</p>
+      </header>
+      <main class="book-grid" id="book-grid"></main>
+      <footer class="site-footer">
+        <p>每一本书，都是一面镜子</p>
+      </footer>
+    </div>
+
+    <div id="book-view" class="hidden">
+      <header class="book-header">
+        <button class="back-btn" id="back-btn">
+          <span class="back-arrow">←</span>
+          <span>返回花园</span>
+        </button>
+        <div class="book-meta">
+          <h1 class="book-title" id="book-title"></h1>
+          <p class="book-author" id="book-author"></p>
+        </div>
+      </header>
+
+      <div class="book-body">
+        <nav class="journey-sidebar" id="journey-sidebar"></nav>
+        <main class="book-content" id="book-content"></main>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    ============================================
+    添加新书指南：
+    1. 在 js/books/ 目录下创建新的 JS 数据文件
+       （参照现有文件的数据结构）
+    2. 在下方添加对应的 <script> 标签
+    3. 刷新页面即可看到新书卡片
+    ============================================
+  -->
+  <script src="js/books/book-easy-way-stop.js"></script>
+  <script src="js/books/book-relationship.js"></script>
+  <script src="js/books/book-present.js"></script>
+  <script src="js/books/book-outwitting-devil.js"></script>
+  <script src="js/books/book-book0.js"></script>
+  <script src="js/books/book-understanding-human-nature.js"></script>
+  <script src="js/books/book-muyangshaonianqianhuanzhilv.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
