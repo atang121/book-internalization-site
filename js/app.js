@@ -12,69 +12,325 @@ const state = {
   bookId: null,
   activeStep: 0,
   observer: null,
+  searchQuery: '',
+  gardenScene: null,
 };
+
+/* ========== INIT ========== */
 
 function init() {
   renderHome();
   bindEvents();
+  initSearch();
+  updateBookCount();
+
+  if (typeof GardenScene !== 'undefined') {
+    state.gardenScene = new GardenScene();
+  }
+
+  animateHomeEntrance();
 }
 
 function bindEvents() {
   document.getElementById('back-btn').addEventListener('click', goHome);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && state.view === 'home' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      document.getElementById('search-input').focus();
+    }
+    if (e.key === 'Escape') {
+      if (state.view === 'home') {
+        const input = document.getElementById('search-input');
+        if (document.activeElement === input) {
+          if (input.value) {
+            clearSearch();
+          } else {
+            input.blur();
+          }
+        }
+      } else {
+        goHome();
+      }
+    }
+  });
 }
 
-function goHome() {
-  state.view = 'home';
-  state.bookId = null;
-  state.activeStep = 0;
-  if (state.observer) {
-    state.observer.disconnect();
-    state.observer = null;
+/* ========== SEARCH ========== */
+
+function initSearch() {
+  const input = document.getElementById('search-input');
+  const clearBtn = document.getElementById('search-clear');
+
+  input.addEventListener('input', (e) => {
+    state.searchQuery = e.target.value;
+    clearBtn.classList.toggle('hidden', !e.target.value);
+    handleSearch(e.target.value);
+  });
+
+  clearBtn.addEventListener('click', clearSearch);
+}
+
+function clearSearch() {
+  const input = document.getElementById('search-input');
+  input.value = '';
+  state.searchQuery = '';
+  document.getElementById('search-clear').classList.add('hidden');
+  handleSearch('');
+  input.focus();
+}
+
+function handleSearch(query) {
+  const books = window.BOOKS || [];
+  const q = query.trim().toLowerCase();
+
+  const filtered = q
+    ? books.filter(b =>
+        b.title.toLowerCase().includes(q) ||
+        b.originalTitle.toLowerCase().includes(q) ||
+        b.author.toLowerCase().includes(q) ||
+        b.authorEn.toLowerCase().includes(q)
+      )
+    : books;
+
+  renderHome(filtered);
+  updateBookCount(filtered.length, books.length, !!q);
+
+  const noResults = document.getElementById('no-results');
+  const footer = document.querySelector('.site-footer');
+  const grid = document.getElementById('book-grid');
+
+  if (filtered.length === 0 && q) {
+    noResults.classList.remove('hidden');
+    footer.classList.add('hidden');
+    grid.classList.add('hidden');
+  } else {
+    noResults.classList.add('hidden');
+    footer.classList.remove('hidden');
+    grid.classList.remove('hidden');
   }
-  document.getElementById('home-view').classList.remove('hidden');
-  document.getElementById('book-view').classList.add('hidden');
-  window.scrollTo(0, 0);
+
+  if (typeof gsap !== 'undefined' && filtered.length > 0) {
+    gsap.fromTo('.book-card',
+      { opacity: 0, y: 24 },
+      { opacity: 1, y: 0, duration: 0.35, stagger: 0.04, ease: 'power2.out' }
+    );
+  }
+}
+
+function updateBookCount(shown, total, isFiltered) {
+  const el = document.getElementById('book-count');
+  const books = window.BOOKS || [];
+  if (!isFiltered) {
+    el.textContent = `共 ${total || books.length} 本书`;
+  } else {
+    el.textContent = `找到 ${shown} / ${total} 本`;
+  }
+}
+
+/* ========== GSAP ANIMATIONS ========== */
+
+function animateHomeEntrance() {
+  if (typeof gsap === 'undefined') return;
+
+  const cards = document.querySelectorAll('.book-card');
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      cards.forEach(c => { c.style.opacity = ''; c.style.transform = ''; });
+    }
+  });
+  tl.fromTo('.site-tag',
+      { opacity: 0, y: -10 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+    .fromTo('.site-title',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.3')
+    .fromTo('.site-subtitle',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+    .fromTo('.search-container',
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+    .fromTo('.book-card',
+      { opacity: 0, y: 40 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.07, ease: 'power2.out' }, '-=0.2')
+    .fromTo('.site-footer',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.4, ease: 'power2.out' }, '-=0.2');
+
+  setTimeout(() => {
+    cards.forEach(c => {
+      if (parseFloat(getComputedStyle(c).opacity) < 0.5) {
+        c.style.opacity = '1';
+        c.style.transform = '';
+      }
+    });
+  }, 3000);
+}
+
+function transitionToBook(callback) {
+  if (typeof gsap === 'undefined') {
+    callback();
+    return;
+  }
+
+  const overlay = document.getElementById('page-transition');
+  overlay.classList.add('active');
+
+  gsap.fromTo(overlay,
+    { opacity: 0 },
+    {
+      opacity: 1,
+      duration: 0.35,
+      ease: 'power2.in',
+      onComplete: () => {
+        callback();
+        gsap.to(overlay, {
+          opacity: 0,
+          duration: 0.4,
+          delay: 0.05,
+          ease: 'power2.out',
+          onComplete: () => overlay.classList.remove('active'),
+        });
+      },
+    }
+  );
+}
+
+function transitionToHome(callback) {
+  if (typeof gsap === 'undefined') {
+    callback();
+    return;
+  }
+
+  const overlay = document.getElementById('page-transition');
+  overlay.classList.add('active');
+
+  gsap.fromTo(overlay,
+    { opacity: 0 },
+    {
+      opacity: 1,
+      duration: 0.3,
+      ease: 'power2.in',
+      onComplete: () => {
+        callback();
+        gsap.to(overlay, {
+          opacity: 0,
+          duration: 0.4,
+          delay: 0.05,
+          ease: 'power2.out',
+          onComplete: () => {
+            overlay.classList.remove('active');
+            if (typeof gsap !== 'undefined') {
+              gsap.fromTo('.book-card',
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out' }
+              );
+            }
+          },
+        });
+      },
+    }
+  );
+}
+
+function setupScrollAnimations() {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.querySelectorAll('.step-section').forEach(section => {
+    gsap.from(section, {
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 85%',
+        once: true,
+      },
+      duration: 0.7,
+      opacity: 0,
+      y: 30,
+      ease: 'power2.out',
+    });
+  });
+}
+
+/* ========== NAVIGATION ========== */
+
+function goHome() {
+  transitionToHome(() => {
+    state.view = 'home';
+    state.bookId = null;
+    state.activeStep = 0;
+    if (state.observer) {
+      state.observer.disconnect();
+      state.observer = null;
+    }
+    document.getElementById('home-view').classList.remove('hidden');
+    document.getElementById('book-view').classList.add('hidden');
+    window.scrollTo(0, 0);
+
+    if (state.gardenScene) state.gardenScene.setDimmed(false);
+
+    if (state.searchQuery) {
+      handleSearch(state.searchQuery);
+    }
+  });
 }
 
 function openBook(bookId) {
-  state.view = 'book';
-  state.bookId = bookId;
-  state.activeStep = 0;
+  transitionToBook(() => {
+    state.view = 'book';
+    state.bookId = bookId;
+    state.activeStep = 0;
 
-  const book = getBook(bookId);
-  if (!book) return;
+    const book = getBook(bookId);
+    if (!book) return;
 
-  document.getElementById('home-view').classList.add('hidden');
-  document.getElementById('book-view').classList.remove('hidden');
-  document.getElementById('book-view').style.setProperty('--book-accent', book.accent);
+    document.getElementById('home-view').classList.add('hidden');
+    document.getElementById('book-view').classList.remove('hidden');
+    document.getElementById('book-view').style.setProperty('--book-accent', book.accent);
 
-  document.getElementById('book-title').textContent = book.title;
-  document.getElementById('book-author').textContent = `${book.author} · ${book.date}`;
+    document.getElementById('book-title').textContent = book.title;
+    document.getElementById('book-author').textContent = `${book.author} \u00B7 ${book.date}`;
 
-  renderSidebar();
-  renderAllSteps();
-  window.scrollTo(0, 0);
+    renderSidebar();
+    renderAllSteps();
+    window.scrollTo(0, 0);
 
-  requestAnimationFrame(() => setupScrollObserver());
+    if (state.gardenScene) state.gardenScene.setDimmed(true);
+
+    requestAnimationFrame(() => {
+      setupScrollObserver();
+      setupScrollAnimations();
+    });
+  });
 }
 
 function getBook(id) {
   return (window.BOOKS || []).find(b => b.id === id);
 }
 
-function renderHome() {
+/* ========== RENDER HOME ========== */
+
+function renderHome(filteredBooks) {
   const grid = document.getElementById('book-grid');
-  const books = window.BOOKS || [];
-  grid.innerHTML = books.map((book, idx) => `
+  const allBooks = window.BOOKS || [];
+  const books = filteredBooks || allBooks;
+
+  grid.innerHTML = books.map((book) => {
+    const globalIdx = allBooks.indexOf(book);
+    return `
     <div class="book-card" data-book-id="${book.id}" style="--card-accent: ${book.accent}">
       <span class="card-icon">${book.icon}</span>
-      <h2 class="card-title"><span class="card-number">${String(idx + 1).padStart(2, '0')}.</span> ${book.title}</h2>
+      <h2 class="card-title"><span class="card-number">${String(globalIdx + 1).padStart(2, '0')}.</span> ${book.title}</h2>
       <p class="card-original-title">${book.originalTitle}</p>
       <p class="card-author">${book.author} (${book.authorEn})</p>
       <p class="card-question">${book.coreProposition.question}</p>
       <p class="card-date">内化于 ${book.date}</p>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   grid.querySelectorAll('.book-card').forEach(card => {
     card.addEventListener('click', () => openBook(card.dataset.bookId));
@@ -215,7 +471,7 @@ function renderAllSteps() {
     html += `</div>`;
 
     if (i < STEPS.length - 1) {
-      html += `<div class="step-divider">◇</div>`;
+      html += `<div class="step-divider">\u25C7</div>`;
     }
   });
 
@@ -253,7 +509,7 @@ function renderAssimilation(book) {
         <div class="principle-header expand-trigger">
           <span class="principle-number">${i + 1}</span>
           <span class="principle-title">${p.title}</span>
-          <span class="principle-toggle">▼</span>
+          <span class="principle-toggle">\u25BC</span>
         </div>
         <div class="principle-body">${p.content}</div>
       </div>
@@ -274,8 +530,8 @@ function renderDestruction(book) {
     html += `
       <div class="belief-card">
         <div class="belief-old">
-          <p class="belief-old-label">旧有信念 — 必须崩塌</p>
-          <p class="belief-old-text">"${b.old}"</p>
+          <p class="belief-old-label">旧有信念 \u2014 必须崩塌</p>
+          <p class="belief-old-text">\u201C${b.old}\u201D</p>
         </div>
         <div class="belief-destruction">${b.destruction}</div>
       </div>
@@ -290,7 +546,7 @@ function renderDestruction(book) {
           <p class="model-label">${m.label}</p>
           <div class="model-transition">
             <span class="model-old">${m.oldModel}</span>
-            <span class="model-arrow">→</span>
+            <span class="model-arrow">\u2192</span>
             <span class="model-new">${m.newModel}</span>
           </div>
         </div>
@@ -312,9 +568,9 @@ function renderPractice(book) {
     html += `
       <div class="scenario-card expandable">
         <div class="scenario-header expand-trigger">
-          <span class="scenario-icon">${s.icon || '🎯'}</span>
+          <span class="scenario-icon">${s.icon || '\uD83C\uDFAF'}</span>
           <span class="scenario-title">${s.title}</span>
-          <span class="scenario-toggle">▼</span>
+          <span class="scenario-toggle">\u25BC</span>
         </div>
         <div class="scenario-body">
           ${s.content}
@@ -338,12 +594,12 @@ function renderCrossDomain(book) {
     html += `
       <div class="cross-card expandable">
         <div class="cross-header expand-trigger">
-          <span class="cross-icon">${conn.icon || '🔗'}</span>
+          <span class="cross-icon">${conn.icon || '\uD83D\uDD17'}</span>
           <div class="cross-title-group">
             <p class="cross-field">${conn.field}</p>
             <p class="cross-title">${conn.title}</p>
           </div>
-          <span class="cross-toggle">▼</span>
+          <span class="cross-toggle">\u25BC</span>
         </div>
         <div class="cross-body">${conn.content}</div>
       </div>
@@ -363,8 +619,8 @@ function renderClosing(book) {
 
   if (cl.quotes) {
     cl.quotes.forEach(q => {
-      html += `<p class="closing-quote">"${q.text}"</p>`;
-      html += `<p class="closing-author">— ${q.author}</p>`;
+      html += `<p class="closing-quote">\u201C${q.text}\u201D</p>`;
+      html += `<p class="closing-author">\u2014 ${q.author}</p>`;
     });
   }
 

@@ -5,9 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>内化花园 — 在阅读中觉醒</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
 </head>
 <body>
+  <canvas id="three-canvas"></canvas>
+
+  <div id="page-transition"></div>
+
   <div id="app">
     <div id="home-view">
       <div class="ambient-glow"></div>
@@ -15,8 +23,27 @@
         <p class="site-tag">A Private Spiritual Garden</p>
         <h1 class="site-title">内化花园</h1>
         <p class="site-subtitle">在阅读中觉醒，在觉醒中生长</p>
+
+        <div class="search-container">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="search-input" placeholder="搜索书名或作者..." autocomplete="off" spellcheck="false">
+            <button class="search-clear hidden" id="search-clear" aria-label="清除搜索">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <p class="book-count" id="book-count"></p>
+        </div>
       </header>
+
       <main class="book-grid" id="book-grid"></main>
+
+      <div class="no-results hidden" id="no-results">
+        <i class="fa-regular fa-face-meh-blank"></i>
+        <p>没有找到匹配的书籍</p>
+        <p class="no-results-hint">试试其他关键词？</p>
+      </div>
+
       <footer class="site-footer">
         <p>每一本书，都是一面镜子</p>
       </footer>
@@ -52,6 +79,7 @@
   -->
   <script src="js/books/book-easy-way-stop.js"></script>
   <script src="js/books/book-relationship.js"></script>
+  <script src="js/books/book-mindset.js"></script>
   <script src="js/books/book-present.js"></script>
   <script src="js/books/book-outwitting-devil.js"></script>
   <script src="js/books/book-book0.js"></script>
